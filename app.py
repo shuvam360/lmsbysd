@@ -460,5 +460,13 @@ def forbidden(e):
 def not_found(e):
     return render_template('404.html'), 404
 
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Use PORT env var when deployed (platforms like Render/Heroku set this).
+    port = int(os.environ.get("PORT", 5000))
+    # Use host 0.0.0.0 so the container accepts external connections.
+    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() in ("1", "true", "yes")
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
+
