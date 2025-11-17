@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Issue Book</h3>
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{ book.title }}</h5>
+    <p class="card-text"><strong>Author:</strong> {{ book.author }}</p>
+    <p class="card-text"><strong>ISBN:</strong> {{ book.isbn or '-' }}</p>
+    <p class="card-text"><strong>Category:</strong> {{ book.category or '-' }}</p>
+    <hr>
+    <p class="card-text"><strong>Return Date:</strong> <span class="text-primary fs-5">{{ return_date.date() }}</span></p>
+    <p class="card-text"><strong>Due Days:</strong> {{ due_days }} days</p>
+    <div class="alert alert-warning" role="alert">
+      <strong>⚠️ Fine Information:</strong> A fine of ₹{{ "%.2f"|format(fine_per_day) }} per day will be charged if the book is returned after the due date.
+    </div>
+    <form method="post">
+      <button type="submit" class="btn btn-success">Confirm Issue</button>
+      <a href="{{ url_for('books') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

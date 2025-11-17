@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Welcome Section -->
+<div class="jumbotron bg-primary text-white rounded p-4 mb-4">
+  <div class="container-fluid">
+    <h1 class="display-5 fw-bold">📚 Welcome to our Library, {{ current_user.name or current_user.username }}!</h1>
+    <p class="lead">Your personal library dashboard - Manage your books, track due dates, and explore our collection.</p>
+    <hr class="my-3 bg-white">
+    <p class="mb-0">Browse through thousands of books, issue your favorites, and return them on time to avoid fines. Happy reading!</p>
+  </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-primary h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-subtitle mb-2 text-white-50">Currently Issued</h6>
+            <h2 class="card-title mb-0">{{ issued_count }}</h2>
+            <small class="text-white-50">Book{{ 's' if issued_count != 1 else '' }}</small>
+          </div>
+          <div class="display-4 opacity-50">📖</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-danger h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-subtitle mb-2 text-white-50">Overdue</h6>
+            <h2 class="card-title mb-0">{{ overdue_count }}</h2>
+            <small class="text-white-50">Book{{ 's' if overdue_count != 1 else '' }}</small>
+          </div>
+          <div class="display-4 opacity-50">⚠️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-success h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-subtitle mb-2 text-white-50">Returned</h6>
+            <h2 class="card-title mb-0">{{ returned_count }}</h2>
+            <small class="text-white-50">Book{{ 's' if returned_count != 1 else '' }}</small>
+          </div>
+          <div class="display-4 opacity-50">✅</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-info h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-subtitle mb-2 text-white-50">Library Collection</h6>
+            <h2 class="card-title mb-0">{{ total_books_in_library }}</h2>
+            <small class="text-white-50">{{ available_books }} available</small>
+          </div>
+          <div class="display-4 opacity-50">🏛️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Library Information Section -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-light">
+    <h5 class="mb-0">📖 About Our Library</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h6 class="text-primary">Our Collection</h6>
+        <p class="text-muted">Our library boasts a vast collection of {{ total_books_in_library }} books covering various genres and subjects. Currently, {{ available_books }} books are available for issue, including fiction, non-fiction, academic texts, and more. Whether you're looking for the latest bestsellers, classic literature, or educational resources, we have something for every reader.</p>
+        
+        <h6 class="text-primary mt-3">Borrowing Policy</h6>
+        <p class="text-muted">You can issue books for up to <strong>{{ DUE_DAYS }} days</strong>. To ensure fair access for all members, please return books on or before the due date. Late returns will incur a fine of <strong>₹{{ "%.2f"|format(fine_per_day) }} per day</strong> after the due date.</p>
+      </div>
+      <div class="col-md-6">
+        <h6 class="text-primary">How to Issue Books</h6>
+        <p class="text-muted">Browse our collection in the <a href="{{ url_for('books') }}" class="text-decoration-none">Books</a> section. When you find a book you'd like to read, click the <span class="badge bg-success">Issue</span> button if the book is available. You'll receive a confirmation with your return date and fine information.</p>
+        
+        <h6 class="text-primary mt-3">Returning Books</h6>
+        <p class="text-muted">Return your books easily through your dashboard. Click the <span class="badge bg-warning text-dark">Return</span> button next to any issued book. Remember to return books on time to avoid fines and ensure they're available for other members.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fine Information Alert -->
+{% if has_issued %}
+<div class="alert alert-info mb-4 shadow-sm" role="alert">
+  <h5 class="alert-heading">💡 Important Fine Information</h5>
+  <p class="mb-2">A fine of <strong>₹{{ "%.2f"|format(fine_per_day) }} per day</strong> will be charged if books are returned after their due date. Please check your return dates below and return books on time to avoid fines.</p>
+  {% if overdue_count > 0 %}
+  <hr>
+  <p class="mb-0"><strong>⚠️ Attention:</strong> You have {{ overdue_count }} overdue book{{ 's' if overdue_count != 1 else '' }}. Please return them immediately to avoid accumulating fines.</p>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Quick Actions -->
+<div class="d-flex gap-2 mb-4">
+  <a href="{{ url_for('books') }}" class="btn btn-primary btn-lg">
+    <span>🔍</span> Browse Books
+  </a>
+  {% if total_fine > 0 %}
+  <div class="alert alert-warning mb-0 d-flex align-items-center px-3">
+    <strong>Outstanding Fine: ₹{{ "%.2f"|format(total_fine) }}</strong>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Your Books Section -->
+<div class="card shadow-sm">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">📚 Your Books & History</h5>
+    <span class="badge bg-primary">{{ my_BookTransactions|length }} total transaction{{ 's' if my_BookTransactions|length != 1 else '' }}</span>
+  </div>
+  <div class="card-body p-0">
+    {% if my_BookTransactions|length == 0 %}
+    <div class="text-center p-5">
+      <div class="display-1 mb-3">📖</div>
+      <h4>No Books Issued Yet</h4>
+      <p class="text-muted mb-4">Start exploring our collection and issue your first book today!</p>
+      <a href="{{ url_for('books') }}" class="btn btn-primary btn-lg">Browse Books</a>
+    </div>
+    {% else %}
+    
+    <!-- Issued Books - Card View -->
+    {% if issued_count > 0 %}
+    <div class="p-3 bg-light border-bottom">
+      <h6 class="mb-3">📖 Currently Issued Books ({{ issued_count }})</h6>
+      <div class="row">
+        {% for t in my_BookTransactions %}
+        {% if t.status == 'issued' %}
+        {% set is_overdue = t.due_date and t.due_date.date() < today %}
+        <div class="col-md-6 mb-3">
+          <div class="card h-100 {% if is_overdue %}border-danger{% else %}border-warning{% endif %} shadow-sm">
+            <div class="card-header {% if is_overdue %}bg-danger text-white{% else %}bg-warning{% endif %}">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">{{ t.book.title }}</h6>
+                <span class="badge bg-{% if is_overdue %}danger{% else %}warning{% endif %} text-dark">
+                  {% if is_overdue %}⚠️ Overdue{% else %}⚠️ Due Soon{% endif %}
+                </span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="card-text mb-2"><strong>Author:</strong> {{ t.book.author }}</p>
+              <p class="card-text mb-2"><strong>Category:</strong> {{ t.book.category or 'Not specified' }}</p>
+              <p class="card-text mb-2"><strong>Issued On:</strong> {{ t.issue_date.date() }}</p>
+              <p class="card-text mb-3">
+                <strong>Return Date (Due):</strong> 
+                <span class="badge bg-{% if is_overdue %}danger{% else %}warning{% endif %} text-dark fs-6">
+                  {{ t.due_date.date() if t.due_date }}
+                </span>
+              </p>
+              
+              <div class="alert alert-{% if is_overdue %}danger{% else %}warning{% endif %} mb-3 py-2" role="alert">
+                <small>
+                  <strong>⚠️ Fine Alert:</strong> 
+                  {% if is_overdue %}
+                    This book is <strong>overdue</strong>! Return it immediately to avoid further fines.
+                  {% else %}
+                    Return by <strong>{{ t.due_date.date() }}</strong> to avoid fines.
+                  {% endif %}
+                  Fine: <strong>₹{{ "%.2f"|format(fine_per_day) }}/day</strong> after due date.
+                </small>
+              </div>
+              
+              <a href="{{ url_for('return_book', trans_id=t.id) }}" class="btn btn-warning btn-sm w-100">
+                📥 Return This Book
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    
+    <!-- All Transactions Table -->
+    <div class="p-3">
+      <h6 class="mb-3">📋 Complete Transaction History</h6>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Book</th>
+              <th>Author</th>
+              <th>Issue Date</th>
+              <th>Due Date</th>
+              <th>Return Date</th>
+              <th>Fine</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in my_BookTransactions %}
+            {% set is_overdue = t.status == 'issued' and t.due_date and t.due_date.date() < today %}
+            <tr {% if is_overdue %}class="table-danger"{% elif t.status == 'issued' %}class="table-warning"{% endif %}>
+              <td>
+                <strong>{{ t.book.title }}</strong>
+                {% if t.book.category %}
+                <br><small class="text-muted">{{ t.book.category }}</small>
+                {% endif %}
+              </td>
+              <td>{{ t.book.author }}</td>
+              <td>{{ t.issue_date.date() }}</td>
+              <td>
+                {% if t.due_date %}
+                  <span class="badge bg-{% if is_overdue %}danger{% elif t.status == 'issued' %}warning{% else %}secondary{% endif %}">
+                    {{ t.due_date.date() }}
+                  </span>
+                {% else %}
+                  <span class="text-muted">-</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if t.return_date %}
+                  <span class="badge bg-success">{{ t.return_date.date() }}</span>
+                {% else %}
+                  <span class="text-muted">Not returned</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if t.fine > 0 %}
+                  <span class="text-danger fw-bold">₹{{ "%.2f"|format(t.fine) }}</span>
+                {% else %}
+                  ₹{{ "%.2f"|format(t.fine) }}
+                {% endif %}
+              </td>
+              <td>
+                {% if t.status == 'issued' %}
+                  <span class="badge bg-primary">Issued</span>
+                {% else %}
+                  <span class="badge bg-success">Returned</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if t.status == 'issued' %}
+                <a href="{{ url_for('return_book', trans_id=t.id) }}" class="btn btn-sm btn-warning">Return</a>
+                {% else %}
+                <span class="text-success">✓ Returned</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Additional Information -->
+<div class="mt-4 card shadow-sm">
+  <div class="card-body">
+    <h6 class="text-primary mb-3">💬 Need Help?</h6>
+    <p class="text-muted mb-0">If you have any questions about our library services, borrowing policies, or need assistance with returning books, please contact the library administrator. We're here to help you make the most of your reading experience!</p>
+  </div>
+</div>
+
+{% endblock %}

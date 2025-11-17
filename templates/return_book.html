@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Return Book</h3>
+<p><strong>User:</strong> {{ BookTransaction.user.username }}</p>
+<p><strong>Book:</strong> {{ BookTransaction.book.title }}</p>
+<p><strong>Issued:</strong> {{ BookTransaction.issue_date.date() }}</p>
+<p><strong>Due:</strong> {{ BookTransaction.due_date.date() if BookTransaction.due_date }}</p>
+<form method="post">
+  <button class="btn btn-warning">Confirm Return</button>
+  <a class="btn btn-secondary" href="javascript:history.back()">Cancel</a>
+</form>
+{% endblock %}

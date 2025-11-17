@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="alert alert-success" role="alert">
+      <h4 class="alert-heading">✓ Book Issued Successfully!</h4>
+      <p>Your book has been issued to your account.</p>
+    </div>
+    
+    <h5 class="card-title">{{ transaction.book.title }}</h5>
+    <p class="card-text"><strong>Author:</strong> {{ transaction.book.author }}</p>
+    <hr>
+    
+    <div class="mb-3">
+      <p class="mb-1"><strong>Issue Date:</strong> {{ transaction.issue_date.date() }}</p>
+      <p class="mb-1"><strong>Return Date (Due):</strong> <span class="text-danger fs-5">{{ transaction.due_date.date() if transaction.due_date }}</span></p>
+    </div>
+    
+    <div class="alert alert-warning" role="alert">
+      <h5 class="alert-heading">⚠️ Important: Fine Information</h5>
+      <p class="mb-0">
+        <strong>Return this book by {{ transaction.due_date.date() if transaction.due_date }} to avoid fines.</strong><br>
+        If you return the book after the due date, a fine of <strong>₹{{ "%.2f"|format(fine_per_day) }} per day</strong> will be charged.
+      </p>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('books') }}" class="btn btn-primary">Browse More Books</a>
+      <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Go to My Account</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

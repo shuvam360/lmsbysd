@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>All Transactions</h3>
+<table class="table">
+  <thead><tr><th>ID</th><th>User</th><th>Book</th><th>Issue</th><th>Due</th><th>Return</th><th>Fine</th><th>Status</th></tr></thead>
+  <tbody>
+    {% for t in transactions %}
+      <tr>
+        <td>{{ t.id }}</td>
+        <td>{{ t.user.username }}</td>
+        <td>{{ t.book.title }}</td>
+        <td>{{ t.issue_date.date() }}</td>
+        <td>{{ t.due_date.date() if t.due_date }}</td>
+        <td>{{ t.return_date.date() if t.return_date }}</td>
+        <td>{{ "%.2f"|format(t.fine) }}</td>
+        <td>{{ t.status }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

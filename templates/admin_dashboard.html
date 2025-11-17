@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<div class="row">
+  <div class="col-md-3"><div class="card p-2"><h4>{{ total_books }}</h4><p>Total Books</p></div></div>
+  <div class="col-md-3"><div class="card p-2"><h4>{{ total_users }}</h4><p>Users</p></div></div>
+  <div class="col-md-3"><div class="card p-2"><h4>{{ issued }}</h4><p>Issued</p></div></div>
+  <div class="col-md-3"><div class="card p-2"><h4>{{ overdue }}</h4><p>Overdue</p></div></div>
+</div>
+
+<div class="mt-4">
+  <h5>Recent Transactions</h5>
+  <table class="table">
+    <thead><tr><th>ID</th><th>User</th><th>Book</th><th>Issue Date</th><th>Due</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for t in recent_transactions %}
+        <tr>
+          <td>{{ t.id }}</td>
+          <td>{{ t.user.username }}</td>
+          <td>{{ t.book.title }}</td>
+          <td>{{ t.issue_date.date() }}</td>
+          <td>{{ t.due_date.date() if t.due_date }}</td>
+          <td>{{ t.status }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

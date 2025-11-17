@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Issue Book</h3>
+<form method="post">
+  <div class="mb-3"><label>User</label>
+    <select name="user_id" class="form-select" required>
+      {% for u in users %}<option value="{{ u.id }}">{{ u.username }} - {{ u.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="mb-3"><label>Book</label>
+    <select name="book_id" class="form-select" required>
+      {% for b in books %}<option value="{{ b.id }}">{{ b.title }} ({{ b.available_copies }} available)</option>{% endfor %}
+    </select>
+  </div>
+  <p>Default due days: {{ due_days }} days</p>
+  <button class="btn btn-success">Issue</button>
+</form>
+{% endblock %}
